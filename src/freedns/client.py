@@ -34,3 +34,17 @@ class Client:
     }
 
     self.session.post(account_create_url, data=payload)
+  
+  def login(self, username, password): 
+    login_url = BASE_URL+"/zc.php?step=2"
+    payload = {
+      "username": email,
+      "password": password,
+      "remember": "1",
+      "submit": "Login",
+      "remote": "",
+      "from": "",
+      "action": "auth"
+    }
+
+    self.session.post(login_url, data=payload)
