@@ -29,6 +29,7 @@ setuptools.setup(
   include_package_data=True,
   install_requires=[
     "lxml",
+    "cssselect",
     "requests[socks]",
     "pysocks" #proxy support to be added later
   ],
