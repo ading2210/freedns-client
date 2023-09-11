@@ -47,7 +47,7 @@ class Client:
   def login(self, username, password): 
     login_url = BASE_URL+"/zc.php?step=2"
     payload = {
-      "username": email,
+      "username": username,
       "password": password,
       "remember": "1",
       "submit": "Login",
@@ -114,3 +114,33 @@ class Client:
       domains.append(domain_data)
 
     return domains
+    
+  def get_subdomains(self):
+    subdomains_url = BASE_URL+"/subdomain/"
+    html = self.session.get(subdomains_url).text
+    document = lxml.html.fromstring(html)
+
+    form = document.cssselect('form[action="delete2.php"]')[0]
+    tbody = form.getchildren()[0]
+
+    subdomains = []
+    for row in tbody.iterchildren():
+      cells = row.getchildren()
+      if len(cells) != 4: continue
+
+      subdomain = cells[1].text_content()
+      subdomain_link = cells[1].getchildren()[0]
+      subdomain_id = subdomain_link.get("href").split("=")[-1]
+
+      record_type = cells[2].text_content()
+      record_value = cells[3].text_content()
+
+      subdomain_data = {
+        "subdomain": subdomain,
+        "id": subdomain_id,
+        "type": record_type,
+        "destination": record_value
+      }
+      subdomains.append(subdomain_data)
+
+    return subdomains
