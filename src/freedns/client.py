@@ -19,6 +19,14 @@ class Client:
     self.session = requests.Session() 
     self.session.headers.update(self.headers)
 
+  def detect_error(self, html):
+    document = lxml.html.fromstring(html)
+
+    table = document.cssselect('table[width="95%"]')[0]
+    cell = table.cssselect('td[bgcolor="#eeeeee"]')[0]
+    error_message = cell.text_content()
+    return error_message.strip()
+
   def get_captcha(self):
     captcha_url = BASE_URL+"/securimage/securimage_show.php"
     response = self.session.get(captcha_url)
@@ -58,7 +66,8 @@ class Client:
 
     response = self.session.post(login_url, data=payload, allow_redirects=False)
     if response.status_code != 302:
-      raise RuntimeError("Login failed. Either the username/password is incorrect or the account is not activated.")
+      error_message = self.detect_error(response.text)
+      raise RuntimeError("Login failed. Error: "+error_message)
     
   def get_registry(self, page=1, sort=5):
     registry_url = BASE_URL+f"/domain/registry/?page={page}&sort={sort}"
@@ -146,3 +155,21 @@ class Client:
       subdomains.append(subdomain_data)
 
     return subdomains
+  
+  def create_subdomain(self, record_type, subdomain, domain_id, destination, captcha_code):
+    create_subdomain_url = BASE_URL+"/subdomain/save.php?step=2"
+    payload = {
+      "type": record_type,
+      "subdomain": subdomain,
+      "domain_id": domain_id,
+      "address": destination,
+      "ttlalias": "For+our+premium+supporters",
+      "captcha_code": captcha_code,
+      "ref": "",
+      "send": "Save!"
+    }
+    
+    response = self.session.post(create_subdomain_url, data=payload, allow_redirects=False)
+    if response.status_code != 302:
+      error_message = self.detect_error(response.text)
+      raise RuntimeError("Failed to create subdomain. Error: "+error_message)
