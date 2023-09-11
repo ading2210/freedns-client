@@ -56,8 +56,10 @@ class Client:
       "action": "auth"
     }
 
-    self.session.post(login_url, data=payload)
-  
+    response = self.session.post(login_url, data=payload, allow_redirects=False)
+    if response.status_code != 302:
+      raise RuntimeError("Login failed. Either the username/password is incorrect or the account is not activated.")
+    
   def get_registry(self, page=1, sort=5):
     registry_url = BASE_URL+f"/domain/registry/?page={page}&sort={sort}"
     html = self.session.get(registry_url).text
