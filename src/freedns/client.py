@@ -173,3 +173,33 @@ class Client:
     if response.status_code != 302:
       error_message = self.detect_error(response.text)
       raise RuntimeError("Failed to create subdomain. Error: "+error_message)
+    
+  def get_subdomain_details(self, subdomain_id):
+    subdomain_url = BASE_URL+f"/subdomain/edit.php?data_id={subdomain_id}"
+    response = self.session.get(subdomain_url, allow_redirects=False)
+
+    if response.status_code == 302:
+      raise RuntimeError("Not authenticated.")
+    document = lxml.html.fromstring(response.text)
+
+    type_select = document.cssselect('select[name="type"]')[0]
+    record_type = type_select.cssselect('option[selected]')[0].get("value")
+
+    domain_select = document.cssselect('select[name="domain_id"]')[0]
+    selected_domain = domain_select.cssselect('option[selected]')[0]
+    domain = selected_domain.text_content().split(" ")[0]
+    domain_id = int(selected_domain.get("value"))
+
+    subdomain = document.cssselect('input[name="subdomain"]')[0].get("value")
+    address = document.cssselect('input[name="address"]')[0].get("value")
+    destination = document.cssselect('input[name="address"]')[0].get("value")
+    wildcard = document.cssselect('input[name="address"]')[0].get("value") == "1"
+    
+    return {
+      "type": record_type,
+      "subdomain": subdomain,
+      "domain": domain,
+      "domain_id": domain_id,
+      "destination": destination,
+      "wildcard": wildcard
+    }

@@ -70,6 +70,17 @@ You can list the subdomains registered to your account using `client.get_subdoma
 
 This function returns a list of dictionaries represnting each subdomain.
 
+### Get a Subdomain's Details (Authe Needed):
+To get the details for a specific subdomain, use `client.get_subdomain_details`. The function takes the following arguments:
+- `subdomain_id` - The ID of the subdomain you are querying. You can find this with `client.get_subdomains`.
+
+The function will return a dict with the subdomain details.
+
+```python
+>> client.get_subdomain_details(20123422)
+{'type': 'A', 'subdomain': 'subdomain', 'domain': 'example.com', 'domain_id': 435322, 'destination': '1.1.1.1', 'wildcard': False}
+```
+
 ### Register a New Subdomain (Auth+Captcha Needed):
 Use the `client.create_subdomain` function to register a new subdomain. The function accepts the following arguments:
 - `record_type` - The type of record to create (for example `CNAME` or `A`).
