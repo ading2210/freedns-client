@@ -64,7 +64,7 @@ The function returns a list of dictionaries which represent each domain entry.
 You can list the subdomains registered to your account using `client.get_subdomains`. The function takes no arguments.
 
 ```python
->> client.
+>> client.get_subdomains()
 [{'subdomain': 'randomdomain.hs.vc', 'id': '34523523', 'type': 'CNAME', 'destination': 'example.com'}, ...]
 ```
 
@@ -83,13 +83,24 @@ The function will return a dict with the subdomain details.
 
 ### Register a New Subdomain (Auth+Captcha Needed):
 Use the `client.create_subdomain` function to register a new subdomain. The function accepts the following arguments:
+- `captcha_code` - The solution for the last captcha requested.
 - `record_type` - The type of record to create (for example `CNAME` or `A`).
 - `subdomain` - The subdomain to create (does not include the domain name).
 - `domain_id` - The ID of the domain to use. You can get this with `client.get_registry`, as documented earlier.
 - `destination` - The destination for the record. 
-- `captcha_code` - The solution for the last captcha requested.
 
 The function will not return anything on success, but it'll raise a `RuntimeError` if the subdomain creation has failed.
+
+### Update a Subdomain (Auth+Captcha Needed):
+Use the `client.update_subdomain` function to update an existing. The function accepts the following arguments:
+- `subdomain_id` - The ID of the subdomain to modify.
+- `captcha_code` - The solution for the last captcha requested.
+- `record_type = None` - The record type.
+- `subdomain = None` - The subdomain to use.
+- `domain_id = None` - The ID of the domain to use. 
+- `destination = None` - The destination for the record. 
+
+Any optional argument will default to no change.
 
 ## Copyright: 
 This program is licensed under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.txt). All code has been written by me, [ading2210](https://github.com/ading2210).

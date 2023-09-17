@@ -32,7 +32,7 @@ class Client:
     response = self.session.get(captcha_url)
     return response.content
   
-  def create_account(self, firstname, lastname, username, password, email, captcha_code):
+  def create_account(self, captcha_code, firstname, lastname, username, password, email):
     account_create_url = BASE_URL+"/signup/?step=2"
     payload = {
       "plan": "starter",
@@ -156,7 +156,7 @@ class Client:
 
     return subdomains
   
-  def create_subdomain(self, record_type, subdomain, domain_id, destination, captcha_code):
+  def create_subdomain(self, captcha_code, record_type, subdomain, domain_id, destination):
     create_subdomain_url = BASE_URL+"/subdomain/save.php?step=2"
     payload = {
       "type": record_type,
@@ -173,7 +173,29 @@ class Client:
     if response.status_code != 302:
       error_message = self.detect_error(response.text)
       raise RuntimeError("Failed to create subdomain. Error: "+error_message)
-    
+  
+  def update_subdomain(self, subdomain_id, captcha_code, **kwargs):
+    update_subdomain_url = BASE_URL+"/subdomain/save.php?step=2"
+
+    defaults = self.get_subdomain_details(subdomain_id)
+    get_arg = lambda x: kwargs.get(x) or defaults[x]
+    payload = {
+      "type": get_arg("type"),
+      "subdomain": get_arg("subdomain"),
+      "domain_id": get_arg("domain_id"),
+      "address": get_arg("destination"),
+      "ttlalias": "For our premium supporters",
+      "captcha_code": captcha_code,
+      "data_id": subdomain_id,
+      "ref": "",
+      "send": "Save!"
+    }
+
+    response = self.session.post(update_subdomain_url, data=payload, allow_redirects=False)
+    if response.status_code != 302:
+      error_message = self.detect_error(response.text)
+      raise RuntimeError("Failed to update subdomain. Error: "+error_message)
+
   def get_subdomain_details(self, subdomain_id):
     subdomain_url = BASE_URL+f"/subdomain/edit.php?data_id={subdomain_id}"
     response = self.session.get(subdomain_url, allow_redirects=False)
