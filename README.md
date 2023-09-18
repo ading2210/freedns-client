@@ -1,5 +1,7 @@
 # Python FreeDNS Client
 
+[![PyPi Version](https://img.shields.io/pypi/v/freedns-client.svg)](https://pypi.org/project/freedns-client/)
+
 This is a Python wrapper for [FreeDNS.afraid.org](https://freedns.afraid.org), which allows for the free registration of subdomains.
 
 ## Features:
@@ -13,7 +15,7 @@ This is a Python wrapper for [FreeDNS.afraid.org](https://freedns.afraid.org), w
 ## Installation:
 You can install this library using the following command: 
 ```
-pip3 install git+https://github.com/ading2210/freedns-client
+pip3 install freedns-client
 ```
 
 ## Documentation:
