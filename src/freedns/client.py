@@ -50,8 +50,30 @@ class Client:
       "send": "Send+activation+email"
     }
 
-    self.session.post(account_create_url, data=payload)
+    response = self.session.post(account_create_url, data=payload, allow_redirects=False)
+    if response.status_code == 302:
+      return
+
+    #if we are not redirected, the signup has failed
+    document = lxml.html.fromstring(response.text)
+    signup_table = document.cssselect('table[width="420"]')[0]
+    error_elements = signup_table.cssselect('b')
+
+    error_messages = []
+    for element in error_elements:
+      error_messages.append("- "+element.text_content().strip())
+    errors = "\n".join(error_messages)
+    
+    raise RuntimeError("Failed to initiate account creation. FreeDNS returned the following errors:\n"+errors)
   
+  def activate_acccount(self, activation_code):
+    activate_url = BASE_URL + f"/signup/activate.php?{activation_code}"
+
+    response = self.session.get(activate_url, allow_redirects=False)
+    if response.status_code != 302:
+      error_message = self.detect_error(response.text)
+      raise RuntimeError("Account activation failed. Error: "+error_message)
+
   def login(self, username, password): 
     login_url = BASE_URL+"/zc.php?step=2"
     payload = {

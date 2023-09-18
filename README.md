@@ -8,6 +8,7 @@ This is a Python wrapper for [FreeDNS.afraid.org](https://freedns.afraid.org), w
 - Get domains in the registry
 - Get subdomains in an account
 - Create a new subdoman record
+- Update subdomain records
 
 ## Installation:
 You can install this library using the following command: 
@@ -25,6 +26,9 @@ import freedns
 client = freedns.Client()
 ```
 
+### Request a Captcha:
+Whenever a captcha is needed, you can request it from the server using `client.get_captcha`. It accepts no arguments, and returns the bytes of a PNG image containing the captcha.
+
 ### Logging In:
 You can log into an existing account with the `client.login` function. It takes the following arguments:
 - `username` - The username/email of the account to log into.
@@ -32,13 +36,19 @@ You can log into an existing account with the `client.login` function. It takes 
 
 If the login fails, the library will raise a `RuntimeError` with the error message reported by FreeDNS.
 
-### Signing Up:
-You can send a confirmation email using `client.signup`. This function is unfinished so it will not be documented.
+### Signing Up (Captcha Required):
+You can send an activation email using `client.create_account`, which accepts the following arguments:
+- `captcha_code` - The solution for the last captcha requested.
+- `firstname` - The first name associated with the account.
+- `lastname` - The last name associated with the account.
+- `username` - The new account's username.
+- `password` - The new account's password. 
+- `email` - The email used for login and verification.
 
-### Request a Captcha (No Auth):
-When a captcha is needed, you can request it from the server using `client.get_captcha`. It accepts no arguments, and returns the bytes of a PNG image containing the captcha.
+After recieving the activation email, you can run `client.activate_account`, which accepts the following arugments:
+- `activation_code` - The activation code that you recieved in your email. This should be the random string of letters at the end of the activation URL. For example, `klsEii2txkW7Wa9DgGaaG6s8` would be the activation code for this URL: `http://freedns.afraid.org/signup/activate.php?klsEii2txkW7Wa9DgGaaG6s8` 
 
-### Fetching the Domain Registry (No Auth):
+### Fetching the Domain Registry:
 You can query the public domain registry using `client.get_registry`. It accepts the following optional arguments:
 - `page = 1` - Which page of results to start at.
 - `sort = 5` - The sort mode to use (details below).
@@ -92,7 +102,7 @@ Use the `client.create_subdomain` function to register a new subdomain. The func
 The function will not return anything on success, but it'll raise a `RuntimeError` if the subdomain creation has failed.
 
 ### Update a Subdomain (Auth+Captcha Needed):
-Use the `client.update_subdomain` function to update an existing. The function accepts the following arguments:
+Use the `client.update_subdomain` function to update an existing subdomain. The function accepts the following arguments:
 - `subdomain_id` - The ID of the subdomain to modify.
 - `captcha_code` - The solution for the last captcha requested.
 - `record_type = None` - The record type.
@@ -100,7 +110,7 @@ Use the `client.update_subdomain` function to update an existing. The function a
 - `domain_id = None` - The ID of the domain to use. 
 - `destination = None` - The destination for the record. 
 
-Any optional argument will default to no change.
+If you don't supply one of the optional arguments, then the value won't change. If the operation fails, a `RuntimeError` will be raised.
 
 ## Copyright: 
 This program is licensed under the [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.txt). All code has been written by me, [ading2210](https://github.com/ading2210).
