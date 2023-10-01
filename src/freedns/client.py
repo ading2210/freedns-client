@@ -66,7 +66,7 @@ class Client:
     
     raise RuntimeError("Failed to initiate account creation. FreeDNS returned the following errors:\n"+errors)
   
-  def activate_acccount(self, activation_code):
+  def activate_account(self, activation_code):
     activate_url = BASE_URL + f"/signup/activate.php?{activation_code}"
 
     response = self.session.get(activate_url, allow_redirects=False)

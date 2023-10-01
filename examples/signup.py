@@ -24,5 +24,5 @@ client.create_account(captcha_code, firstname, lastname, username, password, ema
 print("activation email sent")
 
 activation_code = input("enter activation code: ")
-client.activate_acccount(activation_code)
+client.activate_account(activation_code)
 print("account creation finished")

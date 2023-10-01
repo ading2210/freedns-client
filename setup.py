@@ -9,7 +9,7 @@ long_description = (base_path / "README.md").read_text()
 
 setuptools.setup(
   name="freedns-client",
-  version="0.1.0",
+  version="0.1.1",
   author="ading2210",
   license="GPLv3",
   description="A Python package for interacting with FreeDNS.afraid.org",
