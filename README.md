@@ -9,7 +9,7 @@ This is a Python wrapper for [FreeDNS.afraid.org](https://freedns.afraid.org), w
 - Send account creation email
 - Get domains in the registry
 - Get subdomains in an account
-- Create a new subdoman record
+- Create a new subdomain record
 - Update subdomain records
 
 ## Installation:
@@ -82,7 +82,7 @@ You can list the subdomains registered to your account using `client.get_subdoma
 [{'subdomain': 'randomdomain.hs.vc', 'id': '34523523', 'type': 'CNAME', 'destination': 'example.com'}, ...]
 ```
 
-This function returns a list of dictionaries represnting each subdomain.
+This function returns a list of dictionaries representing each subdomain.
 
 ### Get a Subdomain's Details (Auth Needed):
 To get the details for a specific subdomain, use `client.get_subdomain_details`. The function takes the following arguments:

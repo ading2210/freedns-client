@@ -107,14 +107,12 @@ class Client:
       "total": int(domains_parsed[2].replace(",", ""))
     }
 
-    pages_str = document.cssselect('td[width="33%"]')[-1].text_content()
-    try:
-      pages_parsed = re.findall(r'(\d+) of (\d+)', pages_str)[0]
-    except IndexError:
-      pages_parsed = [1, 1]
+    pages_str = document.cssselect('td[width="33%"][align="center"]')[0]
+    current_page = pages_str.cssselect("input")[0].get("value")
+    total_pages = pages_str.text_content().split()[-1]
     pages_info = {
-      "current_page": int(pages_parsed[0]),
-      "total_pages": int(pages_parsed[1])
+      "current_page": int(current_page),
+      "total_pages": int(total_pages)
     }
 
     table_rows = document.cssselect('tr.trl, tr.trd')
