@@ -91,8 +91,11 @@ class Client:
       error_message = self.detect_error(response.text)
       raise RuntimeError("Login failed. Error: "+error_message)
     
-  def get_registry(self, page=1, sort=5):
+  def get_registry(self, page=1, sort=5, query=None):
     registry_url = BASE_URL+f"/domain/registry/?page={page}&sort={sort}"
+    if not query is None:
+      registry_url += f"&q={query}"
+
     html = self.session.get(registry_url).text
     document = lxml.html.fromstring(html)
     
@@ -101,11 +104,14 @@ class Client:
     domains_info = {
       "page_start": int(domains_parsed[0].replace(",", "")),
       "page_end": int(domains_parsed[1].replace(",", "")),
-      "total": int(domains_parsed[1].replace(",", ""))
+      "total": int(domains_parsed[2].replace(",", ""))
     }
 
     pages_str = document.cssselect('td[width="33%"]')[-1].text_content()
-    pages_parsed = re.findall(r'(\d+) of (\d+)', pages_str)[0]
+    try:
+      pages_parsed = re.findall(r'(\d+) of (\d+)', pages_str)[0]
+    except IndexError:
+      pages_parsed = [1, 1]
     pages_info = {
       "current_page": int(pages_parsed[0]),
       "total_pages": int(pages_parsed[1])
@@ -146,7 +152,11 @@ class Client:
       }
       domains.append(domain_data)
 
-    return domains
+    return {
+      "domains_info": domains_info,
+      "pages_info": pages_info,
+      "domains": domains
+    }
     
   def get_subdomains(self):
     subdomains_url = BASE_URL+"/subdomain/"

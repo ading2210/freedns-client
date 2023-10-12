@@ -54,6 +54,7 @@ After recieving the activation email, you can run `client.activate_account`, whi
 You can query the public domain registry using `client.get_registry`. It accepts the following optional arguments:
 - `page = 1` - Which page of results to start at.
 - `sort = 5` - The sort mode to use (details below).
+- `query = None` - The search query to use.
 
 **Sort modes:**
 1. Domain Name
@@ -65,11 +66,12 @@ You can query the public domain registry using `client.get_registry`. It accepts
 
 Any other value will default to sorting by popularity.
 
-The function returns a list of dictionaries which represent each domain entry.
+The function returns a dictionary consisting of some metadata, as well as a list of domains.
 
 ```python
 >> client.get_registry()
-[{'domain': 'chickenkiller.com', 'id': 14, 'hosts': 305876, 'status': 'public', 'owner_name': 'josh', 'owner_id': 1, 'age': 8293, 'created': '01/02/2001'}, ...]
+>>> client.get_registry(page=10)
+{'domains_info': {'page_start': 901, 'page_end': 1000, 'total': 32715}, 'pages_info': {'current_page': 11, 'total_pages': 328}, 'domains': [{'domain': 'zipper-maker.com', 'id': 167443, 'hosts': 139, 'status': 'public', 'owner_name': 'mwong', 'owner_id': 53163, 'age': 6045, 'created': '03/11/2007'}, ...]}
 ```
 
 ### List Subdomains in an Account (Auth Needed):
@@ -82,7 +84,7 @@ You can list the subdomains registered to your account using `client.get_subdoma
 
 This function returns a list of dictionaries represnting each subdomain.
 
-### Get a Subdomain's Details (Authe Needed):
+### Get a Subdomain's Details (Auth Needed):
 To get the details for a specific subdomain, use `client.get_subdomain_details`. The function takes the following arguments:
 - `subdomain_id` - The ID of the subdomain you are querying. You can find this with `client.get_subdomains`.
 
