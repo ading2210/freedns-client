@@ -134,7 +134,7 @@ class Client:
       owner_id = int(re.findall(r'user_id=(\d+)&subject', owner_link.get("href"))[0])
 
       age_text = cells[3].text_content()
-      age_parsed = re.findall(r'(\d+) days ago \((\S+)\)', age_text)[0]
+      age_parsed = re.findall(r'(\d+) days{0,1} ago \((\S+)\)', age_text)[0]
       days_ago = int(age_parsed[0])
       date_created = age_parsed[1]
 
