@@ -44,6 +44,7 @@ class Client:
       "email": email,
       "captcha_code": captcha_code,
       "tos": "1",
+      "affirm": "1",
       "PROCID": "",
       "TRANSPRE": "",
       "action": "signup",
